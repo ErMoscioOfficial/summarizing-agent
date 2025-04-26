@@ -5,6 +5,9 @@ class SummarizationRequest(BaseModel):
     channel_name : str
     content : str
 
+class ModelResponse(BaseModel):
+    content : str
+
 class MessageItem(BaseModel):
     person: Optional[str] = Field(None, description="Name of the person speaking, if applicable")
     message: str = Field(description="The actual message content")
