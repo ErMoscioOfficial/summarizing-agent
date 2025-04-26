@@ -22,3 +22,6 @@ venv/
 
 # Logs (optional)
 *.log
+
+# Test Files
+test.py
