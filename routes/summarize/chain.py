@@ -13,14 +13,15 @@ llm = Ollama(model="tinyllama")
 
 prompt = PromptTemplate(
     template=(
-        "You are a helpful assistant."
-        "Summarize the following conversation in a clear and concise way. Focus on the key points and main decisions made."
-        "I am {first_name} {last_name}"
-        "Conversation:"
-        "{text}"
-        "Summary:"
+        "You are a helpful assistant.\n"
+        "Focus only on the new information or decisions in the conversation.\n"
+        "Provide a summary of only what's new based on the previous summary and the new messages.\n"
+        "Ignore any old context that is not directly relevant to what's new.\n"
+        "Previous Summary:\n{previous_summary}\n\n"
+        "New Messages:\n{new_messages}\n\n"
+        "Only the new summary of what's changed or been added:"
     ),
-    input_variables=["text", "first_name", "last_name"]
+    input_variables=["previous_summary", 'new_messages']
     #partial_variables={"format_instructions": parser.get_format_instructions()}
 )
 

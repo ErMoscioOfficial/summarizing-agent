@@ -36,6 +36,12 @@ class UserWrongPassword(AppException):
 class NoDataFound(AppException):
     pass
 
+class NoDataToSummarize(AppException):
+    pass
+
+class NoSummariesExist(AppException):
+    pass
+
 def create_exception_handler(
         status_code: int, 
         initial_detail: Any
@@ -121,6 +127,28 @@ def register_all_errors(app: FastAPI):
             status_code = status.HTTP_404_NOT_FOUND,
             initial_detail= {
                 'message' : 'No data present to offload',
+                'error_code':'no_data_found'
+            }
+        )
+    )
+
+    app.add_exception_handler(
+        NoDataToSummarize,
+        create_exception_handler(
+            status_code = status.HTTP_404_NOT_FOUND,
+            initial_detail= {
+                'message' : 'No data present to summarize',
+                'error_code':'no_data_found'
+            }
+        )
+    )
+
+    app.add_exception_handler(
+        NoSummariesExist,
+        create_exception_handler(
+            status_code = status.HTTP_404_NOT_FOUND,
+            initial_detail= {
+                'message' : 'No summaries exist for the desired post',
                 'error_code':'no_data_found'
             }
         )

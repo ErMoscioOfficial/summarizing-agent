@@ -1,0 +1,1 @@
+from routes.posts.routes import post_router
