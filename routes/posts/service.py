@@ -23,7 +23,7 @@ class PostService:
     async def get_post_by_id_with_replies(self, id, session):
         post = await self.get_post_by_id(id, session)
         replies = await reply_service.get_replies_for_post(id, session)
-        detail_model = PostDetailModel(**post.model_dump())
+        detail_model = PostDetailModel(**post.model_dump(), replies = replies)
 
         return detail_model
 

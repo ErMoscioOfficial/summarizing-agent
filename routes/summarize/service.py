@@ -1,4 +1,5 @@
 from db.models import Summaries
+from db import get_session
 
 from datetime import datetime
 
@@ -15,23 +16,24 @@ from errors import NoDataToSummarize
 reply_service = ReplyService()
 
 class SummarizationService:
-    async def summarize_text(self, post_id : int, session : AsyncSession) -> Summaries:
-        latest_summary = await self.get_latest_summary_for_post(post_id, session)
+    async def summarize_text(self, post_id : int) -> Summaries:
+        async for session in get_session():
+            latest_summary = await self.get_latest_summary_for_post(post_id, session)
 
-        latest_summary_contents = latest_summary.content if latest_summary is not None else 'No previous context is present'
-        latest_summary_date = latest_summary.created_at if latest_summary is not None else datetime(2000,1,1)
-        new_messages = await reply_service.get_new_replies_for_post(post_id = post_id, session = session, latest_summary_date = latest_summary_date)
+            latest_summary_contents = latest_summary.content if latest_summary is not None else 'No previous context is present'
+            latest_summary_date = latest_summary.created_at if latest_summary is not None else datetime(2000,1,1)
+            new_messages = await reply_service.get_new_replies_for_post(post_id = post_id, session = session, latest_summary_date = latest_summary_date)
 
-        if len(new_messages) == 0:
-            raise NoDataToSummarize()
+            if len(new_messages) == 0:
+                raise NoDataToSummarize()
 
-        model_output = await summarization_chain.arun(
-            previous_summary = latest_summary_contents,
-            new_messages = '\n'.join([i.content for i in new_messages])
-        )
+            model_output = await summarization_chain.arun(
+                previous_summary = latest_summary_contents,
+                new_messages = '\n'.join([i.content for i in new_messages])
+            )
 
-        log = await self.log_summary(post_id, model_output, session)
-        
+            log = await self.log_summary(post_id, model_output, session)
+            
         return log
 
     async def get_latest_summary_for_post(self, post_id, session : AsyncSession):

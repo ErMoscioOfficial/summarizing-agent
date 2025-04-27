@@ -7,8 +7,6 @@ from typing import List
 
 from routes.summarize.schema import ConversationSummary
 
-#parser = PydanticOutputParser(pydantic_object=ConversationSummary)
-
 llm = Ollama(model="tinyllama")
 
 prompt = PromptTemplate(
@@ -22,7 +20,6 @@ prompt = PromptTemplate(
         "Only the new summary of what's changed or been added:"
     ),
     input_variables=["previous_summary", 'new_messages']
-    #partial_variables={"format_instructions": parser.get_format_instructions()}
 )
 
 summarization_chain = LLMChain(llm=llm, prompt=prompt)
